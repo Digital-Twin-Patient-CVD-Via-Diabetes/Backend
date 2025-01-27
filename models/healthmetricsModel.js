@@ -4,7 +4,7 @@ const metricsSchema = new mongoose.Schema({
     patientId: {
         type: String,
         required: true,
-        ref: "Patient"
+        ref: "patients"
     },
     metricDate:{
         type: Date,
@@ -64,3 +64,4 @@ const metricsSchema = new mongoose.Schema({
 })
 
 const healthMetrics = mongoose.models.healthMetrics || mongoose.model("healthMetrics", metricsSchema);
+export default healthMetrics;
