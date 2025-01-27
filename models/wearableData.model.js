@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const wearableDataSchema = new mongoose.Schema({
     
@@ -12,4 +12,5 @@ const wearableDataSchema = new mongoose.Schema({
 }, { timestamps: true }); 
 
 const wearableData = mongoose.model('WearableData', wearableDataSchema);
-module.exports = wearableData;
+
+export default wearableData;

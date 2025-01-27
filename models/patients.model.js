@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 
 const patientSchema = new mongoose.Schema({
@@ -21,8 +21,10 @@ const patientSchema = new mongoose.Schema({
     admissionDBP: { type: Number },                           
     admissionSOH: { type: String },                           
     ckdFamilyHistory: { type: Boolean },
+    password: { type: String, required: true },
+
 }, { timestamps: true });
 
 
 const patients = mongoose.model('patients', patientSchema);
-module.exports =  patients;
+export default patients;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 
 const doctorsSchema = new mongoose.Schema({
@@ -8,8 +8,9 @@ const doctorsSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },   
     phoneNumber: { type: String },                           
     address: { type: String },
-    
+    password: { type: String, required: true },
 }, { timestamps: true });
 
 const doctors = mongoose.model('doctors', doctorsSchema);
-module.exports =  doctors;
+
+export default doctors;

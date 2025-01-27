@@ -2,6 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/mongodb.js';
+import authRoutes from './routes/authRouter.js';
+import patientRoutes from './routes/patientRoutes.js';
+import doctorRoutes from './routes/doctorRoutes.js';
+
 
 dotenv.config();
 // app config
@@ -12,6 +16,9 @@ connectDB();
 // middleware
 app.use(express.json());
 app.use(cors());
+app.use('/api/auth', authRoutes);
+app.use('/patients', patientRoutes);
+app.use('/doctors', doctorRoutes);
 
 // test route
 app.get('/', (req, res) => {
