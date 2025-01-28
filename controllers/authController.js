@@ -41,7 +41,8 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-    const { role, email, password, name, specialization, phoneNumber, address } = req.body;
+    const { role, email, password, name, specialization, phoneNumber, address,gender,
+                birthDate } = req.body;
 
     try {
         
@@ -60,6 +61,8 @@ const register = async (req, res) => {
                 email,
                 specialization,
                 phoneNumber,
+                gender,
+                birthDate,
                 address,
                 password: hashedPassword,
             });
@@ -68,6 +71,8 @@ const register = async (req, res) => {
                 name,
                 email,
                 phoneNumber,
+                gender,
+                birthDate,
                 address,
                 password: hashedPassword,
             });

@@ -59,17 +59,19 @@ export const assignPatient = async (req, res) => {
 
 export const getLinkedPatients = async (req, res) => {
   try {
-    const doctorId = req.user._id; 
-
+    
+    const doctorId = req.user.id; 
+    
     
     const assignments = await doctorPatientAssignment.find({ doctorId }).select("patientId");
-
+    console.log(assignments);
     const patientIds = assignments.map((assignment) => assignment.patientId);
 
     
     const linkedPatients = await patients.find({ _id: { $in: patientIds } }).select(
        "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory"
     );
+    console.log(linkedPatients);
 
     
     const patientDataWithDetails = await Promise.all(
@@ -86,7 +88,7 @@ export const getLinkedPatients = async (req, res) => {
         };
       })
     );
-
+    console.log(patientDataWithDetails);
     res.status(200).json(patientDataWithDetails);
   } catch (error) {
     res.status(500).json({ message: "Failed to retrieve patients", error: error.message });
