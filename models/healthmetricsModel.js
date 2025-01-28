@@ -10,12 +10,6 @@ const metricsSchema = new mongoose.Schema({
         type: Date,
         
     },
-    createDate:{
-        type: Date,
-    },
-    updatedDate:{
-        type: Date,
-    },
     bloodPressure:{
         type: Number,
     },
@@ -61,7 +55,7 @@ const metricsSchema = new mongoose.Schema({
     thyroxineFreeLevel:{
         type: Number,
     }
-})
+},{ timestamps: true });
 
 const healthMetrics = mongoose.models.healthMetrics || mongoose.model("healthMetrics", metricsSchema);
 export default healthMetrics;

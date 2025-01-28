@@ -53,7 +53,6 @@ const updateHealthMetrics = async (req, res) => {
                     medianNtprobnp,
                     medianT3Value,
                     thyroxineFreeLevel,
-                    updatedDate: Date.now(),
                 }
             }
         );
@@ -107,7 +106,6 @@ const createHealthMetrics = async (req, res) => {
                 medianNtprobnp,
                 medianT3Value,
                 thyroxineFreeLevel,
-                createDate: Date.now(),
             });
 
             await newHealthMetrics.save();
