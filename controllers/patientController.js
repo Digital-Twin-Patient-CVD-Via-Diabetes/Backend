@@ -94,3 +94,82 @@ export const getLinkedPatients = async (req, res) => {
     res.status(500).json({ message: "Failed to retrieve patients", error: error.message });
   }
 };
+
+export const getPatientDetails = async (req, res) => {
+  try {
+
+    const patientId = req.user.id; 
+    console.log(patientId);
+    const patient = await patients.findById(patientId).select(
+      "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory"
+    );
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    
+    
+
+    res.status(200).json(patient); 
+  } catch (error) {
+    console.error("Error fetching patient details:", error);
+    res.status(500).json({ message: "Failed to retrieve patient details", error: error.message });
+  }
+};
+
+
+export const updatePatientDetails = async (req, res) => {
+  try {
+    const patientId = req.user.id; 
+
+    
+    const updates = req.body; 
+    const updatedPatient = await patients.findByIdAndUpdate(patientId, updates, { new: true, runValidators: true });
+
+    if (!updatedPatient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json(updatedPatient); 
+  } catch (error) {
+    console.error("Error updating patient details:", error);
+    res.status(500).json({ message: "Failed to update patient details", error: error.message });
+  }
+};
+
+export const deletePatient = async (req, res) => {
+  try {
+    const patientId = req.user.id; 
+    const deletedPatient = await patients.findByIdAndDelete(patientId);
+
+    if (!deletedPatient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json({ message: "Patient deleted successfully" }); 
+  } catch (error) {
+    console.error("Error deleting patient:", error);
+    res.status(500).json({ message: "Failed to delete patient", error: error.message });
+  }
+};
+
+export const getPatientById = async (req, res) => {
+  try {
+    const { patientId } = req.params; 
+    
+    // Fetch the patient details
+    const patient = await patients.findById(patientId).select(
+      "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory"
+    );
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json(patient);
+  } catch (error) {
+    console.error("Error fetching patient by ID:", error);
+    res.status(500).json({ message: "Failed to retrieve patient", error: error.message });
+  }
+};

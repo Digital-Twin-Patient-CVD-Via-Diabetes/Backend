@@ -5,6 +5,7 @@ import connectDB from './config/mongodb.js';
 import authRoutes from './routes/authRouter.js';
 import patientRoutes from './routes/patientRoutes.js';
 import doctorRoutes from './routes/doctorRoutes.js';
+import wearableRoutes from './routes/wearableRoute.js';
 
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(cors());
 app.use('/api/auth', authRoutes);
 app.use('/patients', patientRoutes);
 app.use('/doctors', doctorRoutes);
+app.use('/wearable', wearableRoutes);
 
 // test route
 app.get('/', (req, res) => {
