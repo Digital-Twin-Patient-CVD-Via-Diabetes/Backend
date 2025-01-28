@@ -1,4 +1,4 @@
-import { create } from "../models/doctorPatientAssignments.model";
+// import { create } from "../models/doctorPatientAssignments.model";
 import healthMetrics from "../models/healthmetricsModel.js";
 import patients from "../models/patients.model.js";
 
