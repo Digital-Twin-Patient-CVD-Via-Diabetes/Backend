@@ -7,6 +7,7 @@ import patientRoutes from './routes/patientRoutes.js';
 import doctorRoutes from './routes/doctorRoutes.js';
 import wearableRoutes from './routes/wearableRoute.js';
 import metricsRouter from './routes/healthmetrics.route.js';
+import medicienRouter from './routes/medicienRouter.js';
 
 
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/patients', patientRoutes);
 app.use('/doctors', doctorRoutes);
 app.use('/wearable', wearableRoutes);
 app.use('/api/metrics',metricsRouter);
+app.use('/api/medicine',medicienRouter);
 
 // test route
 app.get('/', (req, res) => {
