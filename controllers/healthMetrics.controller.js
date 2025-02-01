@@ -20,55 +20,55 @@ const getHealthMetrics = async (req, res) => {
     
 }
 
-const updateHealthMetrics = async (req, res) => {
-    try {
-        const { patientId, metricDate, bloodPressure, bmi, glucose, cholesterolTotal, cholesterolHDL, cholesterolLDL, albuminCreatineUrine, troponinMedian, hemoglobinA1c, creatineKinaseCK, creatineKinaseMB, medianTriglycerides, medianNtprobnp, medianT3Value, thyroxineFreeLevel } = req.body;
+// const updateHealthMetrics = async (req, res) => {
+//     try {
+//         const { patientId, metricDate, bloodPressure, bmi, glucose, cholesterolTotal, cholesterolHDL, cholesterolLDL, albuminCreatineUrine, troponinMedian, hemoglobinA1c, creatineKinaseCK, creatineKinaseMB, medianTriglycerides, medianNtprobnp, medianT3Value, thyroxineFreeLevel } = req.body;
 
-        const findPatient = await patients.findById(patientId);
-        if(!findPatient){
-            return res.status(404).json({ message: "Patient not found" });
-        }
+//         const findPatient = await patients.findById(patientId);
+//         if(!findPatient){
+//             return res.status(404).json({ message: "Patient not found" });
+//         }
 
-        const findHealthMetrics = await healthMetrics.findOne({ patientId});
+//         const findHealthMetrics = await healthMetrics.findOne({ patientId});
 
-        if(findHealthMetrics){
+//         if(findHealthMetrics){
 
-             const updatedHealthMetrics = await healthMetrics.findOneAndUpdate(
-            { patientId },
-            { 
-                $set: {
-                    metricDate,
-                    bloodPressure,
-                    bmi,
-                    glucose,
-                    cholesterolTotal,
-                    cholesterolHDL,
-                    cholesterolLDL,
-                    albuminCreatineUrine,
-                    troponinMedian,
-                    hemoglobinA1c,
-                    creatineKinaseCK,
-                    creatineKinaseMB,
-                    medianTriglycerides,
-                    medianNtprobnp,
-                    medianT3Value,
-                    thyroxineFreeLevel,
-                }
-            }
-        );
+//              const updatedHealthMetrics = await healthMetrics.findOneAndUpdate(
+//             { patientId },
+//             { 
+//                 $set: {
+//                     metricDate,
+//                     bloodPressure,
+//                     bmi,
+//                     glucose,
+//                     cholesterolTotal,
+//                     cholesterolHDL,
+//                     cholesterolLDL,
+//                     albuminCreatineUrine,
+//                     troponinMedian,
+//                     hemoglobinA1c,
+//                     creatineKinaseCK,
+//                     creatineKinaseMB,
+//                     medianTriglycerides,
+//                     medianNtprobnp,
+//                     medianT3Value,
+//                     thyroxineFreeLevel,
+//                 }
+//             }
+//         );
 
-            return res.status(200).json({ message: "Health metrics updated successfully" });
+//             return res.status(200).json({ message: "Health metrics updated successfully", updatedHealthMetrics });
 
-        } else{
-            return res.status(404).json({ message: "Health metrics not found for this patient" });
-        }
+//         } else{
+//             return res.status(404).json({ message: "Health metrics not found for this patient" });
+//         }
         
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: "Internal server error" });
         
-    }
-}
+//     }
+// }
 
 const createHealthMetrics = async (req, res) => {
     try {
@@ -82,11 +82,7 @@ const createHealthMetrics = async (req, res) => {
 
         const findHealthMetrics = await healthMetrics.findOne({ patientId});
 
-        if(findHealthMetrics){
-
-            return res.status(400).json({ message: "Health metrics already exists for this patient" });
-
-        } else{
+        
 
             const newHealthMetrics = new healthMetrics({
                 patientId,
@@ -110,7 +106,7 @@ const createHealthMetrics = async (req, res) => {
 
             await newHealthMetrics.save();
             return res.status(201).json({ message: "Health metrics created successfully" });
-        }
+        
         
         
     } catch (error) {
@@ -119,4 +115,22 @@ const createHealthMetrics = async (req, res) => {
     }
 }
 
-export { getHealthMetrics, updateHealthMetrics, createHealthMetrics };
+const healthMetricsHistory = async (req, res) => {
+    try {
+        const { patientId } = req.body;
+        const patient = await patients.findById(patientId);
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+        const healthMetricsData = patient.healthMetrics || [];
+        if(healthMetricsData.length > 0){
+           return res.status(200).json({ healthMetricsData });
+        }
+        return res.status(404).json({ message: "No health metrics found for this patient" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export { getHealthMetrics, createHealthMetrics, healthMetricsHistory };

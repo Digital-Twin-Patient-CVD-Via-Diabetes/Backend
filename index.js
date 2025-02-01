@@ -9,6 +9,7 @@ import wearableRoutes from './routes/wearableRoute.js';
 import metricsRouter from './routes/healthmetrics.route.js';
 import medicienRouter from './routes/medicienRouter.js';
 import Medicationrouter from './routes/medicationRouter.js';
+import appointmentsRouter from './routes/appointmentsRoutes.js';
 
 
 dotenv.config();
@@ -27,11 +28,17 @@ app.use('/wearable', wearableRoutes);
 app.use('/api/metrics',metricsRouter);
 app.use('/api/medicine',medicienRouter);
 app.use('/api/medication',Medicationrouter);
+app.use('api/appointment',appointmentsRouter);
+
 
 // test route
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
+
+const arr =["doctor","patient"];
+console.log(arr.includes("doctor"));
+console.log(arr.includes("patient"));
 
 // listen
 app.listen(PORT, () => {

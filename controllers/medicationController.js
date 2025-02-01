@@ -1,12 +1,12 @@
 import medications from "../models/medications.model.js";
 import patients from "../models/patients.model.js";
 import doctors from "../models/doctors.model.js";
-import mediciens from "../models/mediciens.model.js";
+// import doctorPatientAssignments from "../models/doctorPatientAssignments.model.js";
 // Create and Save a new Medication
 
 const createMedication = async (req, res) => {
     try {
-        const {patientId, doctorId,medicineId, dosage, startDate, endDate, instructions} = req.body;
+        const {patientId, doctorId,medicationName ,dosage, startDate, endDate, instructions} = req.body;
 
         const patient = await patients.findById(patientId);
         if (!patient) {
@@ -18,11 +18,10 @@ const createMedication = async (req, res) => {
             return res.status(404).json({ message: "Doctor not found" });
         }
 
-        const medicine = await mediciens.findById(medicineId);
-        if (!medicine) {
-            return res.status(404).json({ message: "Medicine not found" });
-        }
-        const medicationName = medicine.name;
+        // const doctorPatientAssignment = await doctorPatientAssignments.findOne({ patientId, doctorId });
+        // if (!doctorPatientAssignment) {
+        //     return res.status(404).json({ message: "Doctor not assigned for this patient" });
+        // }
 
         const findMedication = await medications.findOne({ patientId, doctorId, medicineId, medicationName, dosage, startDate });
         if (findMedication) {
