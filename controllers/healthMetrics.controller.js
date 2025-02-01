@@ -8,9 +8,9 @@ const getHealthMetrics = async (req, res) => {
     
     try {
         const { patientId } = req.body;
-        const healthMetricsData = await healthMetrics.find({ patientId });
-        if(healthMetricsData){
-           return res.status(200).json({ healthMetricsData });
+        const healthMetricsData = await healthMetrics.find({ patientId }).sort({ createdAt: -1 }).limit(1);
+        if (healthMetricsData.length > 0) {
+            return res.status(200).json({ healthMetricsData: healthMetricsData[0] });
         }
         return res.status(404).json({ message: "No health metrics found for this patient" });
     } catch (error) {
