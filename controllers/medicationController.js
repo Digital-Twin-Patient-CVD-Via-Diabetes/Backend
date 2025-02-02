@@ -57,7 +57,7 @@ const getMedications = async (req, res) => {
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
         }
-        const patientMedications = patient.medications;
+        const patientMedications = await medications.find({ patientId });
         if (patientMedications.length === 0) {
             return res.status(404).json({ message: "No medications found" });
         }
