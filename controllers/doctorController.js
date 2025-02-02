@@ -1,8 +1,41 @@
 import doctors from "../models/doctors.model.js";
+import doctorPatientAssignments from "../models/doctorPatientAssignments.model.js";
+
+
+export const getDoctorForPatient = async (req, res) => {
+  try {
+    const patientId = req.user.id;
+    console.log(patientId);
+    
+    const assignment = await doctorPatientAssignments
+      .find({ patientId })
+      .select("doctorId") ;
+
+    console.log(assignment)
+    if (!assignment) {
+  
+      return res.status(404).json({ message: "No assigned doctor found" });
+    }
+
+    const doctor = await doctors
+      .findById(assignment[assignment.length-1].doctorId)
+      .select("_id name specialization email phoneNumber");
+
+      console.log(doctor)
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    res.status(200).json({ doctor });
+  } catch (error) {
+    console.error("Error fetching doctor details:", error);
+    res.status(500).json({ message: "Failed to retrieve doctor details", error: error.message });
+  }
+};
 
 export const getDoctorDetails = async (req, res) => {
   try {
-    const doctorId = req.user.id;  
+    const doctorId = req.user.id;
     console.log(doctorId);
     const doctor = await doctors.findById(doctorId).select(
       "_id name specialization email phoneNumber address"
