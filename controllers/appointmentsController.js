@@ -40,4 +40,36 @@ const getDoctorAppointments = async (req, res) => {
     }
 }
 
-export { createAppointment, getDoctorAppointments };
+const getPatientAppointments = async (req, res) => {
+    try {
+        const patientId = req.user.id;
+        const appointmentsList = await appointments.find({ patientId });
+        if (!appointmentsList) {
+            return res.status(404).json({ message: 'No appointments found' });
+        }
+        return res.status(200).json({ appointments: appointmentsList });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+const editAppointment = async (req, res) => {
+    try {
+        const { appointmentId } = req.params.appointmentId;
+        const { purpose, notes,statue, appointmentDate } = req.body;
+        const appointment = await appointments.findByIdAndUpdate(appointmentId,{$set: 
+            { purpose, notes,statue, appointmentDate }
+        }, { new: true });
+        if (!appointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+       
+        return res.status(200).json({ message: 'Appointment updated', appointment: appointment });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export { createAppointment, getDoctorAppointments, getPatientAppointments, editAppointment };
