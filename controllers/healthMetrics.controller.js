@@ -118,15 +118,13 @@ const createHealthMetrics = async (req, res) => {
 const healthMetricsHistory = async (req, res) => {
     try {
         const { patientId } = req.body;
-        const patient = await patients.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
+        const healthMetricsData  = await healthMetrics.find({patientId})
+        if (!healthMetricsData) {
+            return res.status(404).json({ message: "No health metrics found for this patient" });
         }
-        const healthMetricsData = patient.healthMetrics || [];
-        if(healthMetricsData.length > 0){
-           return res.status(200).json({ healthMetricsData });
-        }
-        return res.status(404).json({ message: "No health metrics found for this patient" });
+       
+        return res.status(200).json({ healthMetricsData });
+        
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
