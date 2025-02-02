@@ -118,7 +118,7 @@ const createHealthMetrics = async (req, res) => {
 const healthMetricsHistory = async (req, res) => {
     try {
         const { patientId } = req.body;
-        const healthMetricsData  = await healthMetrics.findOne({ patientId });
+        const healthMetricsData  = await healthMetrics.find({patientId})
         if (!healthMetricsData) {
             return res.status(404).json({ message: "No health metrics found for this patient" });
         }
