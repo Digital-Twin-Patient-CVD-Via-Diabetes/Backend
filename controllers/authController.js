@@ -139,8 +139,37 @@ const forgetPassword = async (req, res) => {
   }
 }
 
+const createNewPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { id, userType } = decoded;
+
+    let user;
+    if (userType === "doctor") {
+      user = await doctors.findById(id);
+    } else if (userType === "patient") {
+      user = await patients.findById(id);
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 export default {
   login,
   register,
   forgetPassword,
+  createNewPassword,
 };
