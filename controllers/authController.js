@@ -3,6 +3,7 @@ import doctors from '../models/doctors.model.js';
 import patients from '../models/patients.model.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
 
 
 
@@ -88,7 +89,58 @@ const register = async (req, res) => {
     }
 };
 
+
+const forgetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    const doctor = await doctors.findOne({ email });
+    const patient = await patients.findOne({ email });
+
+    let user;
+    let userType;
+    
+    if (doctor) {
+      user = doctor;
+      userType = "doctor";
+    } else if (patient) {
+      user = patient;
+      userType = "patient";
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const token = jwt.sign({ id: user._id, userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const resetLink = `http://yourfrontend.com/reset-password?token=${token}`;
+
+    // Configure nodemailer
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Password Reset',
+      text: `You requested a password reset. Click the link to reset your password: ${resetLink}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({ message: "Password reset link sent to your email" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 export default {
   login,
   register,
+  forgetPassword,
 };
