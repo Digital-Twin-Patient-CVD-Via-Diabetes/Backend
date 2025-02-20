@@ -6,7 +6,8 @@ import doctors from "../models/doctors.model.js";
 
 const createMedication = async (req, res) => {
     try {
-        const {patientId, doctorId,medicationName ,dosage, startDate, endDate, instructions} = req.body;
+        const doctorId = req.user.id
+        const {patientId,medicationName ,dosage, startDate, endDate, instructions} = req.body;
 
         const patient = await patients.findById(patientId);
         if (!patient) {
@@ -23,7 +24,7 @@ const createMedication = async (req, res) => {
         //     return res.status(404).json({ message: "Doctor not assigned for this patient" });
         // }
 
-        const findMedication = await medications.findOne({ patientId, doctorId, medicineId, medicationName, dosage, startDate });
+        const findMedication = await medications.findOne({ patientId, doctorId, medicationName, dosage, startDate });
         if (findMedication) {
             return res.status(400).json({ message: "Medication already exists" });
         }
@@ -32,7 +33,6 @@ const createMedication = async (req, res) => {
         const medication = new medications({
             patientId,
             doctorId,
-            medicineId,
             medicationName,
             dosage,
             startDate,
@@ -50,9 +50,9 @@ const createMedication = async (req, res) => {
 };
 
 // Retrieve Medications for a patient from the database.
-const getMedications = async (req, res) => {
+const getMedicationsPatient = async (req, res) => {
     try {
-        const patientId = req.params.patientId;
+        const patientId = req.user.id;
         const patient = await patients.findById(patientId);
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
@@ -67,6 +67,22 @@ const getMedications = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+// Retrieve Medications for a doctor from the database.
+const getMedicationsDoctor = async (req, res) => {
+    try {
+        const patientId = req.params.patientId;
+        const medication = await medications.find({ patientId });
+        if (!medication) {
+            return res.status(404).json({ message: "Medication not found" });
+        }
+        res.status(200).json(medication);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
 
 // update a medication identified by the medicationId in the request
 
@@ -108,4 +124,4 @@ const deleteMedication = async (req, res) => {
     }
 }
 
-export { createMedication, getMedications, updateMedication, deleteMedication };
+export { createMedication, getMedicationsPatient, updateMedication, deleteMedication, getMedicationsDoctor };

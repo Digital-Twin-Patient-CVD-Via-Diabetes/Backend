@@ -3,7 +3,8 @@ import doctorPatientAssignments from "../models/doctorPatientAssignments.model.j
 const createAppointment = async (req, res) => {
 
     try {
-        const { patientId, doctorId, appointmentDate, purpose, notes } = req.body;
+        const doctorId = req.user.id;
+        const { patientId, appointmentDate, purpose, notes } = req.body;
         const assignToDoctor = await doctorPatientAssignments.findOne({ patientId, doctorId });
 
         if (!assignToDoctor) {
