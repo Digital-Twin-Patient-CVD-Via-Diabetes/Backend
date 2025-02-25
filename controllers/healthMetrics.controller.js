@@ -20,6 +20,20 @@ const getHealthMetrics = async (req, res) => {
     
 }
 
+const getHealthMetricsPatient = async (req, res) => {
+    try {
+        const patientId = req.user.id;
+        const healthMetricsData = await healthMetrics.find({ patientId }).sort({ createdAt: -1 });
+        if (healthMetricsData.length > 0) {
+            return res.status(200).json({ healthMetricsData });
+        }
+        return res.status(404).json({ message: "No health metrics found for this patient" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 // const updateHealthMetrics = async (req, res) => {
 //     try {
 //         const { patientId, metricDate, bloodPressure, bmi, glucose, cholesterolTotal, cholesterolHDL, cholesterolLDL, albuminCreatineUrine, troponinMedian, hemoglobinA1c, creatineKinaseCK, creatineKinaseMB, medianTriglycerides, medianNtprobnp, medianT3Value, thyroxineFreeLevel } = req.body;
@@ -72,8 +86,8 @@ const getHealthMetrics = async (req, res) => {
 
 const createHealthMetrics = async (req, res) => {
     try {
-
-        const { patientId, metricDate, bloodPressure, bmi, glucose, cholesterolTotal, cholesterolHDL, cholesterolLDL, albuminCreatineUrine, troponinMedian, hemoglobinA1c, creatineKinaseCK, creatineKinaseMB, medianTriglycerides, medianNtprobnp, medianT3Value, thyroxineFreeLevel } = req.body;
+        const patientId = req.user.id;
+        const {  metricDate, bloodPressure, bmi, glucose, cholesterolTotal, cholesterolHDL, cholesterolLDL, albuminCreatineUrine, troponinMedian, hemoglobinA1c, creatineKinaseCK, creatineKinaseMB, medianTriglycerides, medianNtprobnp, medianT3Value, thyroxineFreeLevel } = req.body;
 
         const findPatient = await patients.findById(patientId);
         if(!findPatient){
@@ -131,4 +145,4 @@ const healthMetricsHistory = async (req, res) => {
     }
 }
 
-export { getHealthMetrics, createHealthMetrics, healthMetricsHistory };
+export { getHealthMetrics, createHealthMetrics, healthMetricsHistory, getHealthMetricsPatient };

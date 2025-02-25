@@ -1,14 +1,19 @@
 import appointments from "../models/appointments.model.js";
 import doctorPatientAssignments from "../models/doctorPatientAssignments.model.js";
+import doctors from "../models/doctors.model.js";
+import patients from "../models/patients.model.js";
 const createAppointment = async (req, res) => {
 
     try {
-        const { patientId, doctorId, appointmentDate, purpose, notes } = req.body;
+        const doctorId = req.user.id;
+        const { patientId, appointmentDate, purpose, notes } = req.body;
         const assignToDoctor = await doctorPatientAssignments.findOne({ patientId, doctorId });
 
         if (!assignToDoctor) {
             return res.status(400).json({ message: 'Doctor not assigned to patient' });
         }
+        const patientName = await patients.findById(patientId)
+        const doctorName = await doctors.findById(doctorId)
 
         const previousAppointment = await appointments.findOne({ patientId, doctorId, appointmentDate });
 
@@ -16,7 +21,14 @@ const createAppointment = async (req, res) => {
             return res.status(400).json({ message: 'Appointment already exists' });
         }
 
-        const newAppointment = new appointments({ patientId, doctorId, appointmentDate, purpose, notes });
+        const newAppointment = new appointments({
+            patientId,
+            doctorId,
+            doctorName: doctorName.name,
+            patientName: patientName.name,
+            appointmentDate,
+             purpose,
+              notes });
         await newAppointment.save();
         return res.status(201).json({ message: 'Appointment created', appointment: newAppointment });
     } catch (error) {
@@ -33,6 +45,7 @@ const getDoctorAppointments = async (req, res) => {
         if (!appointmentsList) {
             return res.status(404).json({ message: 'No appointments found' });
         }
+        console.log(appointmentsList);
         return res.status(200).json({ appointments: appointmentsList });
     } catch (error) {
         console.log(error);

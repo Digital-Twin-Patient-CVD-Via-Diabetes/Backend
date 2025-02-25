@@ -28,7 +28,7 @@ app.use('/wearable', wearableRoutes);
 app.use('/api/metrics',metricsRouter);
 app.use('/api/medicine',medicienRouter);
 app.use('/api/medication',Medicationrouter);
-app.use('api/appointment',appointmentsRouter);
+app.use('/api/appointment',appointmentsRouter);
 
 
 // test route
