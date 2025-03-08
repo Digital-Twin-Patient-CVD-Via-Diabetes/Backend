@@ -124,7 +124,7 @@ export const updatePatientDetails = async (req, res) => {
     const patientId = req.user.id; 
 
     
-    const updates = req.body; 
+    const updates = req.body;
     const updatedPatient = await patients.findByIdAndUpdate(patientId, updates, { new: true, runValidators: true });
 
     if (!updatedPatient) {
