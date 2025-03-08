@@ -105,6 +105,8 @@ const getPatientAppointments = async (req, res) => {
     try {
         const patientId = req.user.id;
         const appointmentsList = await appointments.find({ patientId });
+        console.log(patientId);
+        console.log(appointmentsList);
         if (!appointmentsList) {
             return res.status(404).json({ message: 'No appointments found' });
         }
@@ -137,10 +139,11 @@ const editAppointment = async (req, res) => {
 
 const editAppointmentPatient = async (req, res) => {
     try {
-        const { appointmentId } = req.params.appointmentId;
-        const { purpose, notes,statue, patientApproval } = req.body;
+        
+        const { status, patientApproval, appointmentId } = req.body;
+        console.log(req.body);
         const appointment = await appointments.findByIdAndUpdate(appointmentId,{$set: 
-            { purpose, notes,statue, patientApproval }
+            { status, patientApproval }
         }, { new: true });
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
