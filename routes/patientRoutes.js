@@ -17,11 +17,11 @@ const patientRoutes = express.Router();
 patientRoutes.get('/profile', authenticatePatient, (req, res) => {
   res.status(200).json({ message: "Patient profile accessed", user: req.user });
 });
-
-patientRoutes.get("/", authenticateDoctor, getLinkedPatients);
-patientRoutes.get("/:patientId",getPatientById)
-patientRoutes.post("/", authenticateDoctor, assignPatient);
 patientRoutes.get("/details", authenticatePatient, getPatientDetails);
 patientRoutes.put("/details",authenticatePatient, updatePatientDetails);
 patientRoutes.delete("/delete", authenticatePatient, deletePatient);
+patientRoutes.get("/", authenticateDoctor, getLinkedPatients);
+patientRoutes.post("/", authenticateDoctor, assignPatient);
+patientRoutes.get("/:patientId",getPatientById)
+
 export default patientRoutes;

@@ -97,20 +97,14 @@ export const getLinkedPatients = async (req, res) => {
 
 export const getPatientDetails = async (req, res) => {
   try {
-
     const patientId = req.user.id; 
     console.log(patientId);
     const patient = await patients.findById(patientId).select(
       "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory"
     );
-
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-
-    
-    
-
     res.status(200).json(patient); 
   } catch (error) {
     console.error("Error fetching patient details:", error);
