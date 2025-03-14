@@ -10,6 +10,7 @@ import metricsRouter from './routes/healthmetrics.route.js';
 import medicienRouter from './routes/medicienRouter.js';
 import Medicationrouter from './routes/medicationRouter.js';
 import appointmentsRouter from './routes/appointmentsRoutes.js';
+import rangeRouter from './routes/ranges.router.js';
 
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use('/api/metrics',metricsRouter);
 app.use('/api/medicine',medicienRouter);
 app.use('/api/medication',Medicationrouter);
 app.use('/api/appointment',appointmentsRouter);
+app.use('/range',rangeRouter);
 
 
 // test route
