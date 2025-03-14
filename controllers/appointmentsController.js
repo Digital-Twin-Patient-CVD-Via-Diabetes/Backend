@@ -21,7 +21,7 @@ const createAppointment = async (req, res) => {
         const formattedDate = moment(appointmentDate, 'DD MMM, YYYY').format('DD MMM, YYYY');
         const formattedTime = moment(appointmentTime, 'hh:mm:ss A').format('hh:mm:ss A');
 
-        const previousAppointment = await appointments.findOne({ patientId, doctorId, appointmentDate: formattedDate, appointmentTime: formattedTime });
+        const previousAppointment = await appointments.findOne({ doctorId, appointmentDate: formattedDate, appointmentTime: formattedTime });
 
         if (previousAppointment) {
             return res.status(400).json({ message: 'Appointment already exists' });
@@ -61,7 +61,7 @@ const createAppointmentPatient = async (req, res) => {
         const formattedDate = moment(appointmentDate, 'DD MMM, YYYY').format('DD MMM, YYYY');
         const formattedTime = moment(appointmentTime, 'hh:mm:ss A').format('hh:mm:ss A');
 
-        const previousAppointment = await appointments.findOne({ patientId, doctorId, appointmentDate: formattedDate, appointmentTime: formattedTime });
+        const previousAppointment = await appointments.findOne({ patientId, appointmentDate: formattedDate, appointmentTime: formattedTime });
 
         if (previousAppointment) {
             return res.status(400).json({ message: 'Appointment already exists' });
@@ -159,13 +159,15 @@ const editAppointmentPatient = async (req, res) => {
 const specificDateAppointmentsDoctor = async (req, res) => {
     try {
         const doctorId = req.user.id;
-        const {date} = req.body;
-        const appointmentsList = await appointments.find({ doctorId,appointmentDate:date });
+        const {date} = req.query;
+        
+        const appointmentsList = await appointments.find({ doctorId,appointmentDate:date }).select('appointmentTime');
         if (!appointmentsList) {
-            return res.status(404).json({ message: 'No appointments found on that date' });
+            return res.status(200).json({ message: 'No appointments found on that date' });
         }
         return res.status(200).json({ appointments: appointmentsList });
     } catch (error) {
+        
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
