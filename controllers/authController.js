@@ -12,7 +12,6 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    
     const doctor = await doctors.findOne({ email });
     if (doctor) {
       const isPasswordValid = await bcrypt.compare(password, doctor.password);
@@ -76,6 +75,7 @@ const register = async (req, res) => {
                 birthDate,
                 address,
                 password: hashedPassword,
+                disease: "none",
             });
         } else {
             return res.status(400).json({ message: 'Invalid role specified.' });

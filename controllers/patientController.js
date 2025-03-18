@@ -7,7 +7,7 @@ import healthMetrics from "../models/healthmetricsModel.js";
 
 export const assignPatient = async (req, res) => {
   const { name, gender, birthDate, phoneNumber } = req.body;
-  const doctorId = req.user.id; 
+  const doctorId = req.user.id;
 
   try {
     
@@ -27,17 +27,11 @@ export const assignPatient = async (req, res) => {
         birthDate: birthDate,
         phoneNumber: phoneNumber,
         password: phoneNumber,
-        
+        disease: "none",
+        email:phoneNumber+"@gmail.com",
       });
-
-      
       await existingPatient.save();
     }
-
-    
-    
-
-    
     const newAssignment = new doctorPatientAssignment({
       doctorId,
       patientId: existingPatient._id,
@@ -69,7 +63,7 @@ export const getLinkedPatients = async (req, res) => {
 
     
     const linkedPatients = await patients.find({ _id: { $in: patientIds } }).select(
-       "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory"
+       "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory disease"
     );
     console.log(linkedPatients);
 
@@ -100,7 +94,7 @@ export const getPatientDetails = async (req, res) => {
     const patientId = req.user.id; 
     console.log(patientId);
     const patient = await patients.findById(patientId).select(
-      "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory"
+      "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory disease"
     );
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
@@ -152,7 +146,6 @@ export const getPatientById = async (req, res) => {
   try {
     const { patientId } = req.params; 
     
-    // Fetch the patient details
     const patient = await patients.findById(patientId).select(
       "_id name gender birthDate email phoneNumber address emergencyContact anchorAge isPregnant isAlcoholUser diabetesPedigree heightCm admissionWeightKg isSmoker admissionSBP admissionDBP admissionSOH ckdFamilyHistory"
     );

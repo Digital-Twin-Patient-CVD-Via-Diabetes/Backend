@@ -23,9 +23,29 @@ export const getRanges = async (req, res) => {
         const metrics = await rangesModel.find({
         ageGroup: { $in: groupsToInclude }
         }).select('healthMetric normalMin normalMax units');
-        res.json(metrics);
+        res.status(200).json(metrics);
+        console.log(metrics);
+        console.log('patientId:', patientId);
     } catch (error) {
         res.status(500).json({ error: error.message });
+        console.log(error);
     }
 };
+
+export const getPatientdage = async (req, res) => {
+    try {
+        const patientId = req.params.patientId;
+        const patient = await Patient.findById(patientId);
+        if (!patient) {
+        return res.status(404).json({ error: 'Patient not found' });
+        }
+        const age = patient.anchorAge;
+        res.status(200).json({ age });
+        console.log(patient.anchorAge);
+        console.log('patientId:', patientId);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+        console.log(error);
+    }};
 

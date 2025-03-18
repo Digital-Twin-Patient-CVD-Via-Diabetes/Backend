@@ -3,13 +3,14 @@ import mongoose from 'mongoose';
 
 const patientSchema = new mongoose.Schema({
     
-    name: { type: String, required: true },                   
-    gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true }, 
+    name: { type: String, required: true },
+    gender: { type: String, enum: ['Male', 'Female', 'Other'], required: true },
     birthDate: { type: Date, required: true },                
     email: { type: String },                                  
     phoneNumber: { type: String },                           
     address: { type: String },                              
-    emergencyContact: { type: String },                       
+    emergencyContact: { type: String },
+    disease: { type: String,enum:['diabetes','cvd','both','none'], required: true },
     anchorAge: { type: Number },                              
     isPregnant: { type: Boolean },                            
     isAlcoholUser: { type: Boolean },                         
