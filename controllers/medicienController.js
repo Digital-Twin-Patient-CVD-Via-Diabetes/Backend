@@ -1,4 +1,6 @@
+import { get } from "mongoose";
 import mediciens from "../models/mediciens.model.js";
+import patients from "../models/patients.model.js";
 
 // Create and Save a new Medicien
 const createMedicien = async (req, res) => {
@@ -36,6 +38,37 @@ const getAllMediciens = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
+const getMedicien = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const patient = await patients.findById(id);
+        if (!patient) return res.status(404).json({ message: "Patient not found" });
+
+        const specialization = patient.disease;
+        if (!specialization || specialization === "none") {
+            return res.status(406).json({ message: "Specialization not found" });
+        }
+
+     const influenceFilter = { influence: "positive" };
+
+        if (specialization === "both") {
+            const [medicine1, medicine2] = await Promise.all([
+                mediciens.find({ specialization: "diabetes", ...influenceFilter }),
+                mediciens.find({ specialization: "cvd", ...influenceFilter })
+            ]);
+            medicien = [...medicine1, ...medicine2];
+           
+        } else {
+            medicien = await mediciens.find({ specialization });
+        }
+
+        return res.status(200).json({ medicien });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
 
 // Find a single medicien with an id
 // const getMedicien = async (req, res) => {
@@ -75,4 +108,4 @@ const deleteMedicien = async (req, res) => {
 }
 
 
-export { createMedicien, getAllMediciens, deleteMedicien };
+export { createMedicien, getMedicien ,getAllMediciens, deleteMedicien };
