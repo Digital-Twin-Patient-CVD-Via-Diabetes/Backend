@@ -6,9 +6,10 @@ import doctors from "../models/doctors.model.js";
 
 const createMedication = async (req, res) => {
     try {
-        const doctorId = req.user.id
-        const {patientId,medicationName ,dosage, startDate, endDate, instructions} = req.body;
-
+        const doctorId = req.user.id;
+        // Make sure to extract medicineId from req.body
+        const { patientId, medicineId, medicationName, dosage, startDate, endDate, instructions } = req.body;
+        console.log("Incoming req.body:", req.body);
         const patient = await patients.findById(patientId);
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
@@ -19,20 +20,15 @@ const createMedication = async (req, res) => {
             return res.status(404).json({ message: "Doctor not found" });
         }
 
-        // const doctorPatientAssignment = await doctorPatientAssignments.findOne({ patientId, doctorId });
-        // if (!doctorPatientAssignment) {
-        //     return res.status(404).json({ message: "Doctor not assigned for this patient" });
-        // }
-
         const findMedication = await medications.findOne({ patientId, doctorId, medicationName, dosage, startDate });
         if (findMedication) {
             return res.status(400).json({ message: "Medication already exists" });
         }
         
-        
         const medication = new medications({
             patientId,
             doctorId,
+            medicineId,  // This now gets the value from req.body
             medicationName,
             dosage,
             startDate,
@@ -48,6 +44,8 @@ const createMedication = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
 
 // Retrieve Medications for a patient from the database.
 const getMedicationsPatient = async (req, res) => {

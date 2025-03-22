@@ -42,32 +42,50 @@ const getMedicien = async (req, res) => {
     try {
         const { id } = req.params;
         const patient = await patients.findById(id);
-        if (!patient) return res.status(404).json({ message: "Patient not found" });
+        console.log(patient);
+
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
 
         const specialization = patient.disease;
         if (!specialization || specialization === "none") {
             return res.status(406).json({ message: "Specialization not found" });
         }
 
-     const influenceFilter = { influence: "positive" };
+        const influenceFilter = { influence: "positive" };
+        let medicine = [];
 
         if (specialization === "both") {
+            // If the patient has both specializations, find medicines for both
             const [medicine1, medicine2] = await Promise.all([
-                mediciens.find({ specialization: "diabetes", ...influenceFilter }),
-                mediciens.find({ specialization: "cvd", ...influenceFilter })
+                mediciens.find({ specialization: "Diabetes", ...influenceFilter }),
+                mediciens.find({ specialization: "CVD", ...influenceFilter })
             ]);
-            medicien = [...medicine1, ...medicine2];
-           
-        } else {
-            medicien = await mediciens.find({ specialization });
+            medicine = [...medicine1, ...medicine2];
+
+        } else if (specialization === "diabetes" ) {
+            
+            medicine = await mediciens.find({ specialization: "Diabetes"});
+            console.log(medicine);
+        }else{
+            medicine = await mediciens.find({ specialization: "CVD"});
+            console.log(medicine);
         }
 
-        return res.status(200).json({ medicien });
+        if (medicine.length === 0) {
+            return res.status(404).json({ message: "No medicines found for this specialization" });
+        }
+
+        return res.status(200).json({ medicine });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
 
 
 // Find a single medicien with an id
