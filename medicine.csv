@@ -1,0 +1,41 @@
+Medication,Primary Disease,Influence
+"Galvus (Galvus)",Diabetes,Positive
+"Met (Galvus Met)",Diabetes,Positive
+"Jardiance (Jardiance)",Diabetes,Positive
+"Ozempic (Ozempic)",Diabetes,Positive
+"Victoza (Victoza)",Diabetes,Positive
+"Glucophage (Glucophage)",Diabetes,Positive
+"Sitagliptin (Januvia)",Diabetes,Positive
+"Canagliflozin (Invokana)",Diabetes,Positive
+"Dapagliflozin (Farxiga)",Diabetes,Positive
+"Dulaglutide (Trulicity)",Diabetes,Positive
+"Exenatide (Byetta)",Diabetes,Positive
+"Pioglitazone (Actos)",Diabetes,Negative
+"Insulin (Humalog, Novolog, Lantus)",Diabetes,Negative
+"Atorvastatin (Lipitor, Atorva)",CVD,Negative
+"Simvastatin (Zocor)",CVD,Negative
+"Rosuvastatin (Crestor)",CVD,Negative
+"Ezetimibe (Zetia)",CVD,Positive
+"Lisinopril (Prinivil, Zestril)",CVD,Positive
+"Enalapril (Vasotec)",CVD,Positive
+"Hydrochlorothiazide (Microzide)",CVD,Negative
+"Metoprolol (Lopressor, Toprol-XL)",CVD,Negative
+"Carvedilol (Coreg)",CVD,Negative
+"Nebivolol (Bystolic)",CVD,Positive
+"Atenolol (Tenormin)",CVD,Negative
+"Bisoprolol (Zebeta)",CVD,Negative
+"Diltiazem (Cardizem)",CVD,Positive
+"Verapamil (Calan)",CVD,Positive
+"Clonidine (Catapres)",CVD,Negative
+"Losartan (Cozaar)",CVD,Positive
+"Valsartan (Diovan)",CVD,Positive
+"Sacubitril/Valsartan (Entresto)",CVD,Positive
+"Furosemide (Lasix)",CVD,Negative
+"Spironolactone (Aldactone)",CVD,Negative
+"Eplerenone (Inspra)",CVD,Positive
+"Clopidogrel (Plavix)",CVD,Positive
+"Aspirin (Aspirin)",CVD,Positive
+"Warfarin (Coumadin)",CVD,Negative
+"Apixaban (Eliquis)",CVD,Positive
+"Rivaroxaban (Xarelto)",CVD,Positive
+"Dabigatran (Pradaxa)",CVD,Negative

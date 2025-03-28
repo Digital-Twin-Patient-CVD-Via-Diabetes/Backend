@@ -4,9 +4,9 @@ const medicationsSchema = new mongoose.Schema({
     
     patientId: { type: String, required: true, ref: 'patients' }, 
     doctorId: { type: String, required: true, ref: 'doctors' },
-    medicineId: { type: String, required: true, ref: 'medicines' },   
-    medicationName: { type: String, required: true },            
-    dosage: { type: String, required: true },                     
+    medicineId: { type: String, required: true, ref: 'medicines' },
+    medicationName: { type: String, required: true },
+    dosage: { type: String, required: true },
     startDate: { type: Date, required: true },                    
     endDate: { type: Date },                                      
     instructions: { type: String },
