@@ -1,4 +1,3 @@
-
 import express from 'express';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import { getLinkedPatients } from '../controllers/patientController.js';
@@ -7,7 +6,8 @@ import { getPatientDetails } from '../controllers/patientController.js';
 import { updatePatientDetails } from '../controllers/patientController.js';
 import { deletePatient } from '../controllers/patientController.js';
 import { getPatientById } from '../controllers/patientController.js';
-
+import { ChangePatientEmail, verifyNewEmail } from '../controllers/patientController.js';
+import { ChangePatientPassword } from '../controllers/patientController.js';
 
 const { authenticatePatient } = authMiddleware;
 const { authenticateDoctor } = authMiddleware;
@@ -23,5 +23,8 @@ patientRoutes.delete("/delete", authenticatePatient, deletePatient);
 patientRoutes.get("/", authenticateDoctor, getLinkedPatients);
 patientRoutes.post("/", authenticateDoctor, assignPatient);
 patientRoutes.get("/:patientId",getPatientById)
+patientRoutes.put("/change-email", authenticatePatient, ChangePatientEmail);
+patientRoutes.get("/verify-email/:token", verifyNewEmail);
+patientRoutes.put("/password",authenticatePatient,ChangePatientPassword)
 
 export default patientRoutes;

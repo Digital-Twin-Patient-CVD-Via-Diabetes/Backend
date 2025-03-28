@@ -3,6 +3,9 @@ import doctorPatientAssignment from "../models/doctorPatientAssignments.model.js
 import appointments from "../models/appointments.model.js";
 import medications from "../models/medications.model.js";
 import healthMetrics from "../models/healthmetricsModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 
 export const assignPatient = async (req, res) => {
@@ -123,6 +126,121 @@ export const updatePatientDetails = async (req, res) => {
   } catch (error) {
     console.error("Error updating patient details:", error);
     res.status(500).json({ message: "Failed to update patient details", error: error.message });
+  }
+};
+
+export const ChangePatientPassword = async (req, res) => {
+  try {
+    const patientId = req.user.id;
+    const { oldPassword, newPassword } = req.body;
+
+    // Find the patient
+    const patient = await patients.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    // Check if old password matches
+    const isMatch = await bcrypt.compare(oldPassword, patient.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    patient.password = hashedPassword;
+    await patient.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({ message: "Failed to change password", error: error.message });
+  }
+};
+
+export const ChangePatientEmail = async (req, res) =>{
+  try {
+    const patientId = req.user.id;
+    const {password, email} = req.body;
+
+    // Validate if it's a Gmail address
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(email)) {
+      return res.status(400).json({ message: "Please provide a valid Gmail address" });
+    }
+
+    const patient = await patients.findById(patientId);
+    if(!patient){
+      return res.status(404).json({message:"Patient not found"});
+    }
+
+    const isMatch = await bcrypt.compare(password, patient.password);
+    if(!isMatch){
+      return res.status(401).json({message:"Invalid password"});
+    }
+
+    // Generate verification token
+    const verificationToken = jwt.sign(
+      { patientId, newEmail: email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // Configure nodemailer
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+    
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Verify Your New Email',
+      text: `Please click the following link to verify your new email address: ${verificationLink}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Verification email sent. Please check your inbox." });
+    
+  } catch (error) {
+    console.error("Error updating email:", error);
+    res.status(500).json({message:"Failed to update email", error:error.message});
+  }
+}
+
+export const verifyNewEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+    
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { patientId, newEmail } = decoded;
+
+    // Update the patient's email
+    const patient = await patients.findByIdAndUpdate(
+      patientId,
+      { email: newEmail },
+      { new: true }
+    );
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json({ message: "Email updated successfully" });
+  } catch (error) {
+    console.error("Error verifying email:", error);
+    res.status(500).json({ message: "Failed to verify email", error: error.message });
   }
 };
 
