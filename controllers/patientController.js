@@ -6,6 +6,7 @@ import healthMetrics from "../models/healthmetricsModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import doctors from "../models/doctors.model.js";
 
 
 export const assignPatient = async (req, res) => {
@@ -143,6 +144,7 @@ export const ChangePatientPassword = async (req, res) => {
     // Check if old password matches
     const isMatch = await bcrypt.compare(oldPassword, patient.password);
     if (!isMatch) {
+      console.log(oldPassword)
       return res.status(401).json({ message: "Current password is incorrect" });
     }
 
@@ -162,10 +164,12 @@ export const ChangePatientPassword = async (req, res) => {
 };
 
 export const ChangePatientEmail = async (req, res) =>{
+  console.log("ChangePatientEmail called")
   try {
     const patientId = req.user.id;
+   
     const {password, email} = req.body;
-
+   
     // Validate if it's a Gmail address
     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     if (!gmailRegex.test(email)) {
@@ -177,8 +181,15 @@ export const ChangePatientEmail = async (req, res) =>{
       return res.status(404).json({message:"Patient not found"});
     }
 
+    // Check if the new email is already in use
+    const emailExist = await patients.findOne({ email }) || await doctors.findOne({ email });
+    if(emailExist){
+      return res.status(403).json({message:"Email already in use"});
+    }
+
     const isMatch = await bcrypt.compare(password, patient.password);
     if(!isMatch){
+      
       return res.status(401).json({message:"Invalid password"});
     }
 
