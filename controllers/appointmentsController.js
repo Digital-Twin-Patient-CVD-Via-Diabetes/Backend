@@ -172,4 +172,20 @@ const specificDateAppointmentsDoctor = async (req, res) => {
     }
 }
 
-export { createAppointment, getDoctorAppointments, getPatientAppointments, editAppointment, createAppointmentPatient, editAppointmentPatient, specificDateAppointmentsDoctor };
+const specificDateAppointmentsPatient = async (req, res) => {
+    try {
+        const patientId = req.user.id;
+        const {date} = req.query;
+        
+        const appointmentsList = await appointments.find({ patientId,appointmentDate:date }).select('appointmentTime');
+        if (!appointmentsList) {
+            return res.status(200).json({ message: 'No appointments found on that date' });
+        }
+        return res.status(200).json({ appointments: appointmentsList });
+    } catch (error) {
+        
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export { createAppointment, getDoctorAppointments, getPatientAppointments, editAppointment, createAppointmentPatient, editAppointmentPatient, specificDateAppointmentsDoctor, specificDateAppointmentsPatient };
