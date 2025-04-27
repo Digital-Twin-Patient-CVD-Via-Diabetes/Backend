@@ -1,4 +1,4 @@
-// routes/mlRouter.js
+
 import { Router } from 'express';
 import patients from '../models/patients.model.js';
 import healthMetrics from '../models/healthmetricsModel.js';
