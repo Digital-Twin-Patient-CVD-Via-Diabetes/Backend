@@ -11,6 +11,10 @@ import medicienRouter from './routes/medicienRouter.js';
 import Medicationrouter from './routes/medicationRouter.js';
 import appointmentsRouter from './routes/appointmentsRoutes.js';
 import rangeRouter from './routes/ranges.router.js';
+import mlRouter from './routes/mlRouter.js';
+import scheduler from './scheduler/risk.js';
+scheduler.start();
+
 
 
 dotenv.config();
@@ -31,7 +35,7 @@ app.use('/api/medicine',medicienRouter);
 app.use('/api/medication',Medicationrouter);
 app.use('/api/appointment',appointmentsRouter);
 app.use('/range',rangeRouter);
-
+app.use('/api/ml',mlRouter);
 
 // test route
 app.get('/', (req, res) => {
