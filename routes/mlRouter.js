@@ -3,7 +3,7 @@ import { Router } from 'express';
 import patients from '../models/patients.model.js';
 import healthMetrics from '../models/healthmetricsModel.js';
 import RiskResult from '../models/riskResult.model.js';
-import { fetchHealthRisk } from '../controllers/mlController.js';
+import { fetchHealthRisk,getPatientModeldata } from '../controllers/mlController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 
 
@@ -18,6 +18,7 @@ function cleanInputValues(inputValues) {
   }
   return cleaned;
 }
+mlRouter.get('/riskresult',authenticatePatient, getPatientModeldata)
 
 mlRouter.post('/healthrisk', authenticatePatient,async (req, res) => {
   const patientId = req.user.id;
@@ -81,6 +82,25 @@ mlRouter.post('/healthrisk', authenticatePatient,async (req, res) => {
       featureImpacts: {
         diabetes:     output["Feature Impacts"].diabetes,
         heartDisease: output["Feature Impacts"].heart_disease
+      },
+      inputValues:{
+        bloodPressure:           latestMetric.bloodPressure,
+        age:                     patient.anchorAge,
+        exerciseHoursPerWeek:    patient.exerciseHoursPerWeek,
+        diet:                    patient.diet,
+        sleepHoursPerDay:        patient.sleepHoursPerDay,
+        stressLevel:             patient.stressLevel,
+        glucose:                 latestMetric.glucose,
+        bmi:                     latestMetric.bmi,
+        hypertension:            hypertension,
+        isSmoking:               patient.isSmoker,
+        hemoglobinA1c:           latestMetric.hemoglobinA1c,
+        diabetesPedigree:        patient.diabetesPedigree,
+        cvdFamilyHistory:        patient.ckdFamilyHistory,
+        ldValue:                 latestMetric.cholesterolLDL,
+        admissionTsh:            latestMetric.thyroxineFreeLevel,
+        isAlcoholUser:           patient.isAlcoholUser,
+        creatineKinaseCk:        latestMetric.creatineKinaseCK
       },
       impactInterpretation: output["Impact Interpretation"]
     });

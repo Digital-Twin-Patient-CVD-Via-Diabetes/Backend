@@ -1,6 +1,8 @@
 
 import axios from 'axios';
 import dotenv from 'dotenv';
+import patients from '../models/patients.model.js';
+import RiskResult from '../models/riskResult.model.js';
 dotenv.config();
 
 
@@ -55,4 +57,32 @@ export async function fetchHealthRisk(inputData) {
   });
 
   return response.data;
+}
+
+export async function getPatientModeldata(req, res) {
+  // Assuming user is already authenticated and `req.user.id` is set
+  const patientId = req.user?.id;
+  if (!patientId) {
+    return res.status(400).json({ error: 'Missing authenticated patient ID' });
+  }
+
+  try {
+    const patient = await patients.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    const result = await RiskResult
+      .findOne({ patientId })
+      .sort({ runDate: -1 });
+
+    if (!result) {
+      return res.status(404).json({ error: 'No health risk data found for this patient' });
+    }
+
+    
+    return res.json({ data: result });
+  } catch (err) {
+    console.error('Error fetching patient model data:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 }

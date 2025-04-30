@@ -15,7 +15,7 @@ const patientSchema = new mongoose.Schema({
     exerciseHoursPerWeek: { type: Number },
     diet: { type: String, enum: ['Healthy', 'Unhealthy']  },
     sleepHoursPerDay: { type: Number },
-    stressLevel: { type: Number, enum: [1, 2, 3, 4, 5] },                         
+    stressLevel: { type: Number, enum: [1, 2, 3, 4, 5] },
     isPregnant: { type: Boolean },
     isAlcoholUser: { type: Boolean },
     diabetesPedigree: { type: Number },
