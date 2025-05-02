@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 const wearableDataSchema = new mongoose.Schema({
     
     patientId: { type: String, required: true, ref: 'patients' }, 
-    timestamp: { type: Date, required: true },                  
-    heartRate: { type: Number },                                
+    timestamp: { type: Date, },                  
     steps: { type: Number },                                    
-    caloriesBurned: { type: Number },                           
+    BloodGlucose: { type: Number },                           
     sleepDuration: { type: Number },                            
-    activityLevel: { type: String },                            
+    BLOODPRESSUREDIASTOLIC: { type: Number },
+    BLOODPRESSURESYSTOLIC: { type: Number },                            
 }, { timestamps: true }); 
 
 const wearableData = mongoose.model('WearableData', wearableDataSchema);
