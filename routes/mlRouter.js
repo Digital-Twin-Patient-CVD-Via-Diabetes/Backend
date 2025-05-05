@@ -3,7 +3,7 @@ import { Router } from 'express';
 import patients from '../models/patients.model.js';
 import healthMetrics from '../models/healthmetricsModel.js';
 import RiskResult from '../models/riskResult.model.js';
-import { fetchHealthRisk,getPatientModeldata ,modelbyid } from '../controllers/mlController.js';
+import { fetchHealthRisk,getPatientModeldata ,modelbyid, whatif } from '../controllers/mlController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import { model } from 'mongoose';
 
@@ -84,25 +84,28 @@ mlRouter.post('/healthrisk', authenticatePatient,async (req, res) => {
         diabetes:     output["Feature Impacts"].diabetes,
         heartDisease: output["Feature Impacts"].heart_disease
       },
-      inputValues:{
-        bloodPressure:           latestMetric.bloodPressure,
-        age:                     patient.anchorAge,
-        exerciseHoursPerWeek:    patient.exerciseHoursPerWeek,
-        diet:                    patient.diet,
-        sleepHoursPerDay:        patient.sleepHoursPerDay,
-        stressLevel:             patient.stressLevel,
-        glucose:                 latestMetric.glucose,
-        bmi:                     latestMetric.bmi,
-        hypertension:            hypertension,
-        isSmoking:               patient.isSmoker,
-        hemoglobinA1c:           latestMetric.hemoglobinA1c,
-        diabetesPedigree:        patient.diabetesPedigree,
-        cvdFamilyHistory:        patient.ckdFamilyHistory,
-        ldValue:                 latestMetric.cholesterolLDL,
-        admissionTsh:            latestMetric.thyroxineFreeLevel,
-        isAlcoholUser:           patient.isAlcoholUser,
-        creatineKinaseCk:        latestMetric.creatineKinaseCK
+      inputValues : {
+        gender:              output["Input Values"].gender,
+        bloodPressure:        output["Input Values"].BloodPressure,
+        age:                  output["Input Values"].age,
+        exerciseHoursPerWeek: output["Input Values"]["Exercise Hours Per Week"],
+        diet:                 output["Input Values"].Diet,
+        sleepHoursPerDay:     output["Input Values"]["Sleep Hours Per Day"],
+        stressLevel:          output["Input Values"]["Stress Level"],
+        glucose:              output["Input Values"].glucose,
+        bmi:                  output["Input Values"].BMI,
+        hypertension:         output["Input Values"].hypertension,
+        isSmoking:            output["Input Values"].is_smoking,
+        hemoglobinA1c:        output["Input Values"].hemoglobin_a1c,
+        diabetesPedigree:     output["Input Values"].Diabetes_pedigree,
+        cvdFamilyHistory:     output["Input Values"].CVD_Family_History,
+        ldValue:              output["Input Values"].ld_value,
+        admissionTsh:         output["Input Values"].admission_tsh,
+        isAlcoholUser:        output["Input Values"].is_alcohol_user,
+        creatineKinaseCk:     output["Input Values"].creatine_kinase_ck
       },
+      
+
       impactInterpretation: output["Impact Interpretation"]
     });
 
@@ -119,6 +122,7 @@ mlRouter.post('/healthrisk', authenticatePatient,async (req, res) => {
   }
 });
 
+mlRouter.post('/whatif',authenticateDoctor,whatif)
 mlRouter.get('/risk/:patientId' ,authenticateDoctor,modelbyid)
 
 export default mlRouter;

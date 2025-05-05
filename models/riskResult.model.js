@@ -2,23 +2,24 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const InputValuesSchema = new Schema({
-  bloodPressure:           { type: Number, required: true },
+  gender:                 { type: String, required: false },
+  bloodPressure:           { type: Number, required: false },
   age:                     { type: Number, required: false },
   exerciseHoursPerWeek:    { type: Number, required: false },
   diet:                    { type: String, required: false },
   sleepHoursPerDay:        { type: Number, required: false },
   stressLevel:             { type: Number, required: false },
-  glucose:                 { type: Number, required: true },
-  bmi:                     { type: Number, required: true },
-  hypertension:            { type: Boolean, required: true },
+  glucose:                 { type: Number, required: false },
+  bmi:                     { type: Number, required: false },
+  hypertension:            { type: Boolean, required: false },
   isSmoking:               { type: Boolean, required: false },
-  hemoglobinA1c:           { type: Number, required: true },
+  hemoglobinA1c:           { type: Number, required: false },
   diabetesPedigree:        { type: Number, required: false },
   cvdFamilyHistory:        { type: Boolean, required: false },
-  ldValue:                 { type: Number, required: true },
-  admissionTsh:            { type: Number, required: true },
+  ldValue:                 { type: Number, required: false },
+  admissionTsh:            { type: Number, required: false },
   isAlcoholUser:           { type: Boolean, required: false },
-  creatineKinaseCk:        { type: Number, required: true }
+  creatineKinaseCk:        { type: Number, required: false }
 }, { _id: false });
 
 const riskResultSchema = new mongoose.Schema({
