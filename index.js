@@ -13,6 +13,7 @@ import appointmentsRouter from './routes/appointmentsRoutes.js';
 import rangeRouter from './routes/ranges.router.js';
 import mlRouter from './routes/mlRouter.js';
 import scheduler from './scheduler/risk.js';
+import planRouter from './routes/planRouter.js';
 scheduler.start();
 
 
@@ -36,6 +37,7 @@ app.use('/api/medication',Medicationrouter);
 app.use('/api/appointment',appointmentsRouter);
 app.use('/range',rangeRouter);
 app.use('/api/ml',mlRouter);
+app.use('/plan',planRouter);
 
 // test route
 app.get('/', (req, res) => {
