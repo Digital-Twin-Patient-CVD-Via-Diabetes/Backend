@@ -86,3 +86,33 @@ export async function getPatientModeldata(req, res) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+export async function modelbyid(req, res) {
+  const patientId = req.params.patientId;
+  console.log('req.params =', req.params);
+
+  if (!patientId) {
+    return res.status(400).json({ error: 'Missing patientId in request params' });
+  }
+
+  try {
+    const patient = await patients.findById(patientId);
+   
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    const result = await RiskResult
+      .findOne({ patientId })
+      .sort({ runDate: -1 });
+    
+    if (!result) {
+      return res.status(404).json({ error: 'No health risk data found for this patient' });
+    }
+
+    
+    return res.json({ data: result });
+  } catch (err) {
+    console.error('Error fetching patient model data:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}

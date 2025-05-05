@@ -3,11 +3,12 @@ import { Router } from 'express';
 import patients from '../models/patients.model.js';
 import healthMetrics from '../models/healthmetricsModel.js';
 import RiskResult from '../models/riskResult.model.js';
-import { fetchHealthRisk,getPatientModeldata } from '../controllers/mlController.js';
+import { fetchHealthRisk,getPatientModeldata ,modelbyid } from '../controllers/mlController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
+import { model } from 'mongoose';
 
 
-const { authenticatePatient } = authMiddleware;
+const { authenticatePatient ,authenticateDoctor} = authMiddleware;
 const mlRouter = Router();
 
 function cleanInputValues(inputValues) {
@@ -117,5 +118,7 @@ mlRouter.post('/healthrisk', authenticatePatient,async (req, res) => {
     res.status(500).json({ error: 'Failed to process health risk' });
   }
 });
+
+mlRouter.get('/risk/:patientId' ,authenticateDoctor,modelbyid)
 
 export default mlRouter;
