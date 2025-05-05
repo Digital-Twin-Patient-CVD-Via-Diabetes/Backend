@@ -76,7 +76,7 @@ export  async function generatePlan(req, res) {
   }
 }
 
-async function getPlansForDoctor(req, res) {
+export async function getPlansForDoctor(req, res) {
   try {
     const doctorId = req.user.id;
     const assignments = await doctorPatientAssignment.find({ doctorId }).lean();
