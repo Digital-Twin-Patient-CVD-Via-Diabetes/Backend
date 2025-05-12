@@ -2,7 +2,7 @@ import express from 'express';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import{ addWearableData} from '../controllers/wearableController.js';
 
-const { authenticateDoctor,authenticatePatient } = authMiddleware;
+const { authenticatePatient } = authMiddleware;
 
 
 const wearableRoutes = express.Router();

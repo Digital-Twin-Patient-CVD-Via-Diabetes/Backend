@@ -76,7 +76,10 @@ export const addWearableData = async (req, res) => {
       sleepDuration,
       BloodGlucose,
     } = req.body;
-    
+    const avg = arr =>
+      Array.isArray(arr) && arr.length
+        ? arr.reduce((sum, v) => sum + v, 0) / arr.length
+        : null;
     const newWearableData = new WearableData({
       patientId,
       timestamp,
@@ -103,13 +106,21 @@ export const addWearableData = async (req, res) => {
         .status(404)
         .json({ message: "No health metrics found for this patient" });
     }
+    const avgSystolic = avg(BLOODPRESSURESYSTOLIC);
+    const avgDiastolic = avg(BLOODPRESSUREDIASTOLIC);
+    const avgBloodPressure =
+      avgSystolic !== null && avgDiastolic !== null
+        ? (avgSystolic + avgDiastolic) / 2
+        : avgSystolic ?? avgDiastolic;
+
+    const avgGlucose = avg(BloodGlucose);
 
 
     const newMetric = new healthMetrics({
       patientId,
       metricDate: timestamp,
-      bloodPressure: BLOODPRESSURESYSTOLIC,
-      glucose: BloodGlucose,
+      bloodPressure: avgBloodPressure,
+      glucose: avgGlucose,
       bmi: latestMetric.bmi,
       cholesterolTotal: latestMetric.cholesterolTotal,
       cholesterolHDL: latestMetric.cholesterolHDL,
@@ -131,6 +142,7 @@ export const addWearableData = async (req, res) => {
     } else {
       updatedPatient = patient;
     }
+    
     res.status(201).json(newWearableData);
   } catch (error) {
     console.error("Error adding wearable data:", error);
