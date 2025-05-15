@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const doctorPatientAssignmentSchema = new mongoose.Schema({
     
@@ -11,4 +11,5 @@ const doctorPatientAssignmentSchema = new mongoose.Schema({
 }, { timestamps: true }); 
 
 const doctorPatientAssignments = mongoose.model('doctorPatientAssignments', doctorPatientAssignmentSchema);
-module.exports = doctorPatientAssignments;
+
+export default doctorPatientAssignments;
