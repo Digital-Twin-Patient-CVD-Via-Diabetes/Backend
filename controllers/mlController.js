@@ -305,7 +305,11 @@ export async function LLMModelData(req, res) {
   } catch (err) {
     console.error('Error fetching or saving plan:', err);
     if (axios.isAxiosError(err)) {
-      return res.status(502).json({ error: 'Failed to fetch plan from external API' });
+      const savedPlan = await Plan.findOne({ patientId });
+      if (savedPlan) {
+        return res.json(savedPlan);
+      }
+      return res.status(500).json({ error: 'Internal server error' });
     }
     return res.status(500).json({ error: 'Internal server error' });
   }
