@@ -1,7 +1,7 @@
 import doctors from "../models/doctors.model.js";
 import doctorPatientAssignments from "../models/doctorPatientAssignments.model.js";
 import patients from "../models/patients.model.js";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
