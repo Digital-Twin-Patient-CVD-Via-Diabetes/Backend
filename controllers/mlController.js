@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import patients from '../models/patients.model.js';
 import RiskResult from '../models/riskResult.model.js';
 import healthMetrics from '../models/healthmetricsModel.js';
+import Plan from '../models/plan.model.js';
 dotenv.config();
 
 
@@ -254,6 +255,58 @@ export async function whatif(req, res) {
 
   } catch (err) {
     console.error('Error fetching patient model data:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
+export async function LLMModelData(req, res) {
+  const patientId = req.user?.id;
+  if (!patientId) {
+    return res.status(400).json({ error: 'Missing authenticated patient ID' });
+  }
+
+  try {
+    const patient = await patients.findById(patientId).lean();
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    const apiUrl = `https://ai-agent-4-a48m.onrender.com/recommendations/${patientId}?sent_for=0`;
+    const { data } = await axios.get(apiUrl);
+
+    const { recommendations } = data;
+
+    const savedPlan = await Plan.findOneAndUpdate(
+      { patientId },
+      {
+        patientId,
+        patientRecommendations: recommendations.patient_recommendations,
+        dietPlan: {
+          description: recommendations.diet_plan.description,
+          calories: recommendations.diet_plan.calories,
+          meals: recommendations.diet_plan.meals
+        },
+        exercisePlan: {
+          type: recommendations.exercise_plan.type,
+          duration: recommendations.exercise_plan.duration,
+          frequency: recommendations.exercise_plan.frequency
+        },
+        nutritionTargets: {
+          targetBMI: recommendations.nutrition_targets.target_BMI,
+          targetGlucose: recommendations.nutrition_targets.target_glucose,
+          targetLDValue: recommendations.nutrition_targets.target_ld_value
+        }
+      },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+
+    return res.status(200).json(savedPlan);
+
+  } catch (err) {
+    console.error('Error fetching or saving plan:', err);
+    if (axios.isAxiosError(err)) {
+      return res.status(502).json({ error: 'Failed to fetch plan from external API' });
+    }
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

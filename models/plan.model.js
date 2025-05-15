@@ -7,34 +7,32 @@ const planSchema = new mongoose.Schema({
     required: true,
     ref: 'patients'
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  diabetesSpecialistVersion: {
-    type: Map,
-    of: String,
+  patientRecommendations: {
+    type: [String],
     required: true
   },
-  cardiologySpecialistVersion: {
-    type: Map,
-    of: String,
-    required: true
+  dietPlan: {
+    description: { type: String, required: true },
+    calories: { type: Number, required: true },
+    meals: [{ type: String, required: true }]
   },
-  patientVersion: {
-    type: Map,
-    of: String,
-    required: true
+  exercisePlan: {
+    type: {
+      type: String,
+      required: true
+    },
+    duration: { type: Number, required: true },
+    frequency: { type: Number, required: true }
   },
   nutritionTargets: {
-    dailyCalories: { type: Number, required: true },
-    targetWeight: { type: Number, required: true },
-    weightGoal: { type: String, required: true }
-  },
-  
+    targetBMI: { type: Number, required: true },
+    targetGlucose: { type: Number, required: true },
+    targetLDValue: { type: String, required: true }
+  }
 }, {
   timestamps: true
 });
+
 
 const Plan = mongoose.models.Plan || mongoose.model('Plan', planSchema);
 export default Plan;
