@@ -4,7 +4,6 @@ import{ addWearableData} from '../controllers/wearableController.js';
 
 const { authenticatePatient } = authMiddleware;
 
-
 const wearableRoutes = express.Router();
 
 

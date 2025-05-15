@@ -12,15 +12,18 @@ const planSchema = new mongoose.Schema({
     default: Date.now
   },
   diabetesSpecialistVersion: {
-    type: String,
+    type: Map,
+    of: String,
     required: true
   },
   cardiologySpecialistVersion: {
-    type: String,
+    type: Map,
+    of: String,
     required: true
   },
   patientVersion: {
-    type: String,
+    type: Map,
+    of: String,
     required: true
   },
   nutritionTargets: {
@@ -28,11 +31,7 @@ const planSchema = new mongoose.Schema({
     targetWeight: { type: Number, required: true },
     weightGoal: { type: String, required: true }
   },
-  raw: {
-    diabetes: { type: String, required: true },
-    cardiology: { type: String, required: true },
-    patient: { type: String, required: true }
-  }
+  
 }, {
   timestamps: true
 });

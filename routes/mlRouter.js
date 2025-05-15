@@ -3,7 +3,7 @@ import { Router } from 'express';
 import patients from '../models/patients.model.js';
 import healthMetrics from '../models/healthmetricsModel.js';
 import RiskResult from '../models/riskResult.model.js';
-import { fetchHealthRisk,getPatientModeldata ,modelbyid, whatif } from '../controllers/mlController.js';
+import { fetchHealthRisk,getPatientModeldata ,modelbyid, whatif ,} from '../controllers/mlController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import { model } from 'mongoose';
 
@@ -122,7 +122,8 @@ mlRouter.post('/healthrisk', authenticatePatient,async (req, res) => {
   }
 });
 
-mlRouter.post('/whatif',authenticateDoctor,whatif)
-mlRouter.get('/risk/:patientId' ,authenticateDoctor,modelbyid)
+mlRouter.post('/whatif',authenticateDoctor,whatif);
+mlRouter.get('/risk/:patientId' ,authenticateDoctor,modelbyid);
+// mlRouter.get('/model/:patientId', authenticatePatient,LLMModelData);
 
 export default mlRouter;

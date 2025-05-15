@@ -8,7 +8,6 @@ const metricsSchema = new mongoose.Schema({
     },
     metricDate:{
         type: Date,
-        
     },
     bloodPressure:{
         type: Number,

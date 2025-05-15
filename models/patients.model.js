@@ -24,7 +24,7 @@ const patientSchema = new mongoose.Schema({
     isSmoker: { type: Boolean },
     admissionSBP: { type: Number },
     admissionDBP: { type: Number },
-    admissionSOH: { type: String },
+    admissionSOH: { type: Number },
     ckdFamilyHistory: { type: Boolean },
     password: { type: String, required: true },
 
