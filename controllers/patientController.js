@@ -3,7 +3,7 @@ import doctorPatientAssignment from "../models/doctorPatientAssignments.model.js
 import appointments from "../models/appointments.model.js";
 import medications from "../models/medications.model.js";
 import healthMetrics from "../models/healthmetricsModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import doctors from "../models/doctors.model.js";
