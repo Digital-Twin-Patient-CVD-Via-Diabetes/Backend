@@ -12,7 +12,7 @@ import doctors from "../models/doctors.model.js";
 export const assignPatient = async (req, res) => {
   const { name, gender, birthDate, phoneNumber } = req.body;
   const doctorId = req.user.id;
-
+  const hashedPassword = await bcrypt.hash(phoneNumber, 10);
   try {
     
     const isDoctor = req.user.userType === "doctor";
@@ -30,7 +30,7 @@ export const assignPatient = async (req, res) => {
         gender,
         birthDate: birthDate,
         phoneNumber: phoneNumber,
-        password: phoneNumber,
+        password: hashedPassword,
         disease: "none",
         email:phoneNumber+"@gmail.com",
       });
