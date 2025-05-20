@@ -1,49 +1,96 @@
 import medications from "../models/medications.model.js";
 import patients from "../models/patients.model.js";
 import doctors from "../models/doctors.model.js";
+import mediciens from "../models/mediciens.model.js";
+import axios from "axios";
+import dotenv from "dotenv";
+
 // import doctorPatientAssignments from "../models/doctorPatientAssignments.model.js";
 // Create and Save a new Medication
 
-const createMedication = async (req, res) => {
+const getMedicationInfo = async (medicationName) => {
+    console.log(">>> getMedicationInfo START for:", medicationName);
+    const MED_NAME_API_URL = process.env.MED_NAME_API_URL;
     try {
-        const doctorId = req.user.id;
-        
-        const { patientId, medicineId, medicationName, dosage, startDate, endDate, instructions } = req.body;
-        console.log("Incoming req.body:", req.body);
-        const patient = await patients.findById(patientId);
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
+      const response = await axios({
+        method: "POST",
+        url:    MED_NAME_API_URL,
+        headers:{ "Content-Type": "application/json" },
+        data:   { med_name: medicationName }
+      });
 
-        const doctor = await doctors.findById(doctorId);
-        if (!doctor) {
-            return res.status(404).json({ message: "Doctor not found" });
-        }
+      const apiData = response.data;
+      console.log("<<< getMedicationInfo RESPONSE data:", apiData);
+      const med = new mediciens({
+        Medication: apiData.Medication,
+        specialization: apiData.specialization,
+        Influence:      apiData.Influence,
+        createdAt:      new Date()
+      });
 
-        const findMedication = await medications.findOne({ patientId, doctorId, medicationName, dosage, startDate });
-        if (findMedication) {
-            return res.status(400).json({ message: "Medication already exists" });
-        }
-        
-        const medication = new medications({
-            patientId,
-            doctorId,
-            medicineId,
-            medicationName,
-            dosage,
-            startDate,
-            endDate,
-            instructions
-        });
-
-        await medication.save();
-        res.status(201).json({ message: "Medication created successfully" });
-
+      const saved = await med.save();
+      console.log("<<< getMedicationInfo SAVED to DB:", saved);
+      return saved;
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+      console.error("!!! getMedicationInfo ERROR:", error.message);
+      throw error;
     }
-};
+  };
+  
+  const createMedication = async (req, res) => {
+    try {
+      const doctorId = req.user.id;
+      const {
+        patientId,
+        medicineId,
+        medicationName,
+        dosage,
+        startDate,
+        endDate,
+        instructions
+      } = req.body;
+      console.log("Incoming req.body:", req.body);
+  
+      const patient = await patients.findById(patientId);
+      if (!patient) return res.status(404).json({ message: "Patient not found" });
+  
+      const doctor = await doctors.findById(doctorId);
+      if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+  
+      // duplicate check
+      const duplicate = await medications.findOne({ patientId, doctorId, medicationName, dosage, startDate });
+      if (duplicate) return res.status(400).json({ message: "Medication already exists" });
+  
+      // **Check the right model here!**
+      const existing = await mediciens.findOne({ medicationName });
+      console.log("Existing mediciens entry:", existing);
+  
+      if (!existing) {
+        console.log("No existing ‘medicien’ entry. Firing API call…");
+        getMedicationInfo(medicationName)
+          .then(() => console.log("External API request sent successfully."))
+          .catch(err => console.error("Error calling external API:", err.message));
+      }
+  
+      // save the new medication
+      const medication = new medications({
+        patientId,
+        doctorId,
+        medicineId,
+        medicationName,
+        dosage,
+        startDate,
+        endDate,
+        instructions
+      });
+      await medication.save();
+  
+      res.status(201).json({ message: "Medication created successfully" });
+    } catch (error) {
+      console.error("Error in createMedication:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 
 
 
@@ -122,4 +169,4 @@ const deleteMedication = async (req, res) => {
     }
 }
 
-export { createMedication, getMedicationsPatient, updateMedication, deleteMedication, getMedicationsDoctor };
+export { createMedication, getMedicationsPatient, updateMedication, deleteMedication, getMedicationsDoctor  };

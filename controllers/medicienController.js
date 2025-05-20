@@ -64,6 +64,8 @@ const getMedicien = async (req, res) => {
 
 
 
+
+
 // Find a single medicien with an id
 // const getMedicien = async (req, res) => {
 //     try {
