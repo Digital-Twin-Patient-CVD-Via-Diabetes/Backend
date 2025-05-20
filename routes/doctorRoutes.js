@@ -18,7 +18,7 @@ doctorRoutes.put('/', authenticateDoctor,updateDoctorDetails);
 doctorRoutes.delete('/', authenticateDoctor,deleteDoctor);
 doctorRoutes.get('/patient',authenticatePatient,getDoctorForPatient)
 doctorRoutes.put('/change-email', authenticateDoctor, ChangeDoctorEmail);
-doctorRoutes.get('/verify-email/:token',verifyNewEmail)
+doctorRoutes.get('/verify-email',verifyNewEmail)
 doctorRoutes.put('/password',authenticateDoctor,ChangeDoctorPassword)
 
 
