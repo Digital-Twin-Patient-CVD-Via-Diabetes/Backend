@@ -83,47 +83,68 @@ const getHealthMetricsPatient = async (req, res) => {
 const createHealthMetrics = async (req, res) => {
     try {
         const patientId = req.user.id;
-        const {  metricDate, bloodPressure, bmi, glucose, cholesterolTotal, cholesterolHDL, cholesterolLDL, albuminCreatineUrine, troponinMedian, hemoglobinA1c, creatineKinaseCK, creatineKinaseMB, medianTriglycerides, medianNtprobnp, medianT3Value, thyroxineFreeLevel } = req.body;
+        const {
+            metricDate,
+            bloodPressure,
+            bmi,
+            glucose,
+            cholesterolTotal,
+            cholesterolHDL,
+            cholesterolLDL,
+            albuminCreatineUrine,
+            troponinMedian,
+            hemoglobinA1c,
+            creatineKinaseCK,
+            creatineKinaseMB,
+            medianTriglycerides,
+            medianNtprobnp,
+            medianT3Value,
+            thyroxineFreeLevel,
+        } = req.body;
 
+        
         const findPatient = await patients.findById(patientId);
-        if(!findPatient){
+        if (!findPatient) {
             return res.status(404).json({ message: "Patient not found" });
         }
 
-        const findHealthMetrics = await healthMetrics.findOne({ patientId});
+        const findHealthMetrics = await healthMetrics.findOne({ patientId });
+
+        const updatedHealthMetrics = {
+            metricDate: metricDate || findHealthMetrics?.metricDate,
+            bloodPressure: bloodPressure || findHealthMetrics?.bloodPressure,
+            bmi: bmi || findHealthMetrics?.bmi,
+            glucose: glucose || findHealthMetrics?.glucose,
+            cholesterolTotal: cholesterolTotal || findHealthMetrics?.cholesterolTotal,
+            cholesterolHDL: cholesterolHDL || findHealthMetrics?.cholesterolHDL,
+            cholesterolLDL: cholesterolLDL || findHealthMetrics?.cholesterolLDL,
+            albuminCreatineUrine: albuminCreatineUrine || findHealthMetrics?.albuminCreatineUrine,
+            troponinMedian: troponinMedian || findHealthMetrics?.troponinMedian,
+            hemoglobinA1c: hemoglobinA1c || findHealthMetrics?.hemoglobinA1c,
+            creatineKinaseCK: creatineKinaseCK || findHealthMetrics?.creatineKinaseCK,
+            creatineKinaseMB: creatineKinaseMB || findHealthMetrics?.creatineKinaseMB,
+            medianTriglycerides: medianTriglycerides || findHealthMetrics?.medianTriglycerides,
+            medianNtprobnp: medianNtprobnp || findHealthMetrics?.medianNtprobnp,
+            medianT3Value: medianT3Value || findHealthMetrics?.medianT3Value,
+            thyroxineFreeLevel: thyroxineFreeLevel || findHealthMetrics?.thyroxineFreeLevel,
+        };
 
         
-
+        
             const newHealthMetrics = new healthMetrics({
                 patientId,
-                metricDate,
-                bloodPressure,
-                bmi,
-                glucose,
-                cholesterolTotal,
-                cholesterolHDL,
-                cholesterolLDL,
-                albuminCreatineUrine,
-                troponinMedian,
-                hemoglobinA1c,
-                creatineKinaseCK,
-                creatineKinaseMB,
-                medianTriglycerides,
-                medianNtprobnp,
-                medianT3Value,
-                thyroxineFreeLevel,
+                ...updatedHealthMetrics,
             });
 
             await newHealthMetrics.save();
             return res.status(201).json({ message: "Health metrics created successfully" });
         
-        
-        
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
+};
+
 
 const healthMetricsHistory = async (req, res) => {
     try {

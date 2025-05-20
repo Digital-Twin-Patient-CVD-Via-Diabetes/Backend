@@ -47,31 +47,7 @@ const getMedicien = async (req, res) => {
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
         }
-
-        const specialization = patient.disease;
-        if (!specialization || specialization === "none") {
-            return res.status(406).json({ message: "Specialization not found" });
-        }
-
-        const influenceFilter = { influence: "positive" };
-        let medicine = [];
-
-        if (specialization === "both") {
-            // If the patient has both specializations, find medicines for both
-            const [medicine1, medicine2] = await Promise.all([
-                mediciens.find({ specialization: "Diabetes", ...influenceFilter }),
-                mediciens.find({ specialization: "CVD", ...influenceFilter })
-            ]);
-            medicine = [...medicine1, ...medicine2];
-
-        } else if (specialization === "diabetes" ) {
-            
-            medicine = await mediciens.find({ specialization: "Diabetes"});
-            console.log(medicine);
-        }else{
-            medicine = await mediciens.find({ specialization: "CVD"});
-            console.log(medicine);
-        }
+        const medicine = await mediciens.find();
 
         if (medicine.length === 0) {
             return res.status(404).json({ message: "No medicines found for this specialization" });

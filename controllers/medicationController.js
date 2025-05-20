@@ -7,7 +7,7 @@ import doctors from "../models/doctors.model.js";
 const createMedication = async (req, res) => {
     try {
         const doctorId = req.user.id;
-        // Make sure to extract medicineId from req.body
+        
         const { patientId, medicineId, medicationName, dosage, startDate, endDate, instructions } = req.body;
         console.log("Incoming req.body:", req.body);
         const patient = await patients.findById(patientId);
@@ -28,7 +28,7 @@ const createMedication = async (req, res) => {
         const medication = new medications({
             patientId,
             doctorId,
-            medicineId,  // This now gets the value from req.body
+            medicineId,
             medicationName,
             dosage,
             startDate,

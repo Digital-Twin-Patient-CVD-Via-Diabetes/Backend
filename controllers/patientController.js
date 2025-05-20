@@ -33,6 +33,7 @@ export const assignPatient = async (req, res) => {
         password: hashedPassword,
         disease: "none",
         email:phoneNumber+"@gmail.com",
+        isVerified: true,
       });
       await existingPatient.save();
     }
@@ -103,7 +104,7 @@ export const getPatientDetails = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    res.status(200).json(patient); 
+    res.status(200).json(patient);
   } catch (error) {
     console.error("Error fetching patient details:", error);
     res.status(500).json({ message: "Failed to retrieve patient details", error: error.message });
