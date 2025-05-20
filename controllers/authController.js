@@ -135,81 +135,81 @@ const register = async (req, res) => {
 };
 
 
-const forgetPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
+// const forgetPassword = async (req, res) => {
+//   try {
+//     const { email } = req.body;
     
-    const doctor = await doctors.findOne({ email });
-    const patient = await patients.findOne({ email });
+//     const doctor = await doctors.findOne({ email });
+//     const patient = await patients.findOne({ email });
 
-    let user;
-    let userType;
+//     let user;
+//     let userType;
     
-    if (doctor) {
-      user = doctor;
-      userType = "doctor";
-    } else if (patient) {
-      user = patient;
-      userType = "patient";
-    } else {
-      return res.status(404).json({ message: "User not found" });
-    }
+//     if (doctor) {
+//       user = doctor;
+//       userType = "doctor";
+//     } else if (patient) {
+//       user = patient;
+//       userType = "patient";
+//     } else {
+//       return res.status(404).json({ message: "User not found" });
+//     }
 
-    const token = jwt.sign({ id: user._id, userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const resetLink = `http://yourfrontend.com/reset-password?token=${token}`;
+//     const token = jwt.sign({ id: user._id, userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
+//     const resetLink = `http://yourfrontend.com/reset-password?token=${token}`;
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      secure: true,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+//     const transporter = nodemailer.createTransport({
+//       service: 'gmail',
+//       secure: true,
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Password Reset',
-      text: `You requested a password reset. Click the link to reset your password: ${resetLink}`,
-    };
+//     const mailOptions = {
+//       from: process.env.EMAIL_USER,
+//       to: email,
+//       subject: 'Password Reset',
+//       text: `You requested a password reset. Click the link to reset your password: ${resetLink}`,
+//     };
 
-    await transporter.sendMail(mailOptions);
+//     await transporter.sendMail(mailOptions);
 
-    return res.status(200).json({ message: "Password reset link sent to your email" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-}
+//     return res.status(200).json({ message: "Password reset link sent to your email" });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// }
 
-const createNewPassword = async (req, res) => {
-  try {
-    const { token, password } = req.body;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { id, userType } = decoded;
+// const createNewPassword = async (req, res) => {
+//   try {
+//     const { token, password } = req.body;
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const { id, userType } = decoded;
 
-    let user;
-    if (userType === "doctor") {
-      user = await doctors.findById(id);
-    } else if (userType === "patient") {
-      user = await patients.findById(id);
-    }
+//     let user;
+//     if (userType === "doctor") {
+//       user = await doctors.findById(id);
+//     } else if (userType === "patient") {
+//       user = await patients.findById(id);
+//     }
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = hashedPassword;
-    await user.save();
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     user.password = hashedPassword;
+//     await user.save();
 
-    return res.status(200).json({ message: "Password reset successful" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-}
+//     return res.status(200).json({ message: "Password reset successful" });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// }
 export const verifyEmail = async (req, res) => {
   const { token } = req.query;
   if (!token) {
@@ -262,6 +262,99 @@ export const verifyEmail = async (req, res) => {
       </body>
     </html>
   `);
+};
+
+const forgetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    // Find user in either doctors or patients collection
+    const doctor = await doctors.findOne({ email });
+    const patient = await patients.findOne({ email });
+
+    let user;
+    let userType;
+    
+    if (doctor) {
+      user = doctor;
+      userType = 'doctor';
+    } else if (patient) {
+      user = patient;
+      userType = 'patient';
+    } else {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id, userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    
+    // Create reset link pointing to front-end
+    const resetLink = `http://127.0.0.1:5500/src/reset-password.html?token=${token}`;
+
+    // Set up email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    // Email options
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Password Reset Request',
+      text: `You requested a password reset. Click the link to reset your password: ${resetLink}\nThis link expires in 1 hour.`,
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({ message: 'Password reset link sent to your email' });
+  } catch (error) {
+    console.error('Error in forgetPassword:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const createNewPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    const { id, userType } = decoded;
+
+    // Find user based on userType
+    let user;
+    if (userType === 'doctor') {
+      user = await doctors.findById(id);
+    } else if (userType === 'patient') {
+      user = await patients.findById(id);
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Error in createNewPassword:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 export default {
