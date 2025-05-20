@@ -34,5 +34,12 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.7",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.7"
   }
 }
