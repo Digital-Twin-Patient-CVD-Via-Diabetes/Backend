@@ -9,6 +9,9 @@ const doctorsSchema = new mongoose.Schema({
     phoneNumber: { type: String },                           
     address: { type: String },
     password: { type: String, required: true },
+    isVerified: { type: Boolean, default: false },
+    verificationToken: { type: String },
+    verificationTokenExpires: { type: Date },
 }, { timestamps: true });
 
 const doctors = mongoose.model('doctors', doctorsSchema);

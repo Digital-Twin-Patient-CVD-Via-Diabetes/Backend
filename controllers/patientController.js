@@ -12,7 +12,7 @@ import doctors from "../models/doctors.model.js";
 export const assignPatient = async (req, res) => {
   const { name, gender, birthDate, phoneNumber } = req.body;
   const doctorId = req.user.id;
-
+  const hashedPassword = await bcrypt.hash(phoneNumber, 10);
   try {
     
     const isDoctor = req.user.userType === "doctor";
@@ -30,9 +30,10 @@ export const assignPatient = async (req, res) => {
         gender,
         birthDate: birthDate,
         phoneNumber: phoneNumber,
-        password: phoneNumber,
+        password: hashedPassword,
         disease: "none",
         email:phoneNumber+"@gmail.com",
+        isVerified: true,
       });
       await existingPatient.save();
     }
@@ -103,7 +104,7 @@ export const getPatientDetails = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    res.status(200).json(patient); 
+    res.status(200).json(patient);
   } catch (error) {
     console.error("Error fetching patient details:", error);
     res.status(500).json({ message: "Failed to retrieve patient details", error: error.message });

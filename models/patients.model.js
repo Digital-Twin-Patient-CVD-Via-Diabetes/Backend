@@ -27,6 +27,9 @@ const patientSchema = new mongoose.Schema({
     admissionSOH: { type: Number },
     ckdFamilyHistory: { type: Boolean },
     password: { type: String, required: true },
+    isVerified:{ type: Boolean, default: false },
+    verificationToken:{ type: String },
+    verificationTokenExpires:{ type: Date },
 
 }, { timestamps: true });
 
