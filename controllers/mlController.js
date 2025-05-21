@@ -211,11 +211,11 @@ export async function whatif(req, res) {
     return res.status(400).json({ error: 'Missing inputValues in request' });
   }
 
-  // Gender handling
+  
   const genderRaw = inputValues.gender ? inputValues.gender.toLowerCase() : 'male';
   baseUrl = genderRaw === 'male' ? MALE_BN : FEMALE_BN;
 
-  // Define key mapping (camelCase to ML expected format)
+  
   const keyMap = {
     bloodPressure: 'Blood_Pressure',
     age: 'Age',
