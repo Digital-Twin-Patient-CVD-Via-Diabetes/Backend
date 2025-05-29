@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import patients from '../models/patients.model.js';
 import RiskResult from '../models/riskResult.model.js';
 import healthMetrics from '../models/healthmetricsModel.js';
+import Recommendation from '../models/doctorPlan.model.js';
+import doctors from '../models/doctors.model.js';
 import Plan from '../models/plan.model.js';
 dotenv.config();
 
@@ -271,9 +273,10 @@ export async function LLMModelData(req, res) {
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
     }
-    const apiUrl = `https://ai-agent-4-a48m.onrender.com/recommendations/${patientId}?sent_for=0`;
+    const apiUrl = `https://ai2agent.onrender.com/recommendations/${patientId}?sent_for=0`;
+  
     const { data } = await axios.get(apiUrl);
-
+    console.log("AI response:", data);
     const { recommendations } = data;
 
     const savedPlan = await Plan.findOneAndUpdate(
@@ -283,25 +286,23 @@ export async function LLMModelData(req, res) {
         patientRecommendations: recommendations.patient_recommendations,
         dietPlan: {
           description: recommendations.diet_plan.description,
-          calories: recommendations.diet_plan.calories,
-          meals: recommendations.diet_plan.meals
+          dailyCaloriesTarget: Number(recommendations.diet_plan.daily_calories?.target || 0),
+          meals: recommendations.diet_plan.meals || []
         },
         exercisePlan: {
-          type: recommendations.exercise_plan.type,
-          duration: recommendations.exercise_plan.duration,
-          frequency: recommendations.exercise_plan.frequency
+          typeRecommendations: recommendations.exercise_plan.type_recommendations,
+          frequencySuggestion: recommendations.exercise_plan.frequency_recommendations?.suggestion,
+          weeklySchedule: recommendations.exercise_plan.weekly_schedule || []
         },
         nutritionTargets: {
           targetBMI: recommendations.nutrition_targets.target_BMI,
           targetGlucose: recommendations.nutrition_targets.target_glucose,
-          targetLDValue: recommendations.nutrition_targets.target_ld_value
+          cholesterolTargets: recommendations.nutrition_targets.other?.cholesterol || "Not specified"
         }
       },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
-
     return res.status(200).json(savedPlan);
-
   } catch (err) {
     console.error('Error fetching or saving plan:', err);
     if (axios.isAxiosError(err)) {
@@ -311,6 +312,64 @@ export async function LLMModelData(req, res) {
       }
       return res.status(500).json({ error: 'Internal server error' });
     }
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+const SPECIALTY_SENTFOR_MAP = {
+  Cardiology: 1,
+  Endocrinology: 2
+};
+
+export async function LLMModelDoctorData(req, res) {
+  const doctorId = req.user?.id;
+  const { patientId } = req.params;
+
+  if (!doctorId) {
+    return res.status(400).json({ error: 'Missing authenticated doctor ID' });
+  }
+  if (!patientId) {
+    return res.status(400).json({ error: 'Missing patient ID in request body' });
+  }
+
+  try {
+    const doctor = await doctors.findById(doctorId).lean();
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    const doctorSpecialty = doctor.specialization;
+    const sentFor = SPECIALTY_SENTFOR_MAP[doctorSpecialty] || 1;
+
+    const apiUrl = `https://ai2agent.onrender.com/recommendations/${patientId}?sent_for=${sentFor}`;
+    const { data } = await axios.get(apiUrl);
+    console.log('AI response:', data);
+    const { recommendations } = data;
+
+    
+    const recDoc = new Recommendation({
+      patientId,
+      doctorId,
+      patient_recommendations: recommendations.patient_recommendations || null,
+      diet_plan: recommendations.diet_plan || {},
+      exercise_plan: recommendations.exercise_plan || null,
+      nutrition_targets: recommendations.nutrition_targets || null,
+      doctor_recommendations: recommendations.doctor_recommendations || [],
+      medication_recommendations: recommendations.medication_recommendations || [],
+      required_labs: recommendations.required_labs || [],
+      selected_patient_recommendations: recommendations.selected_patient_recommendations || [],
+      current_medications: recommendations.current_medications || []
+    });
+
+    await recDoc.save();
+    return res.status(200).json(recDoc);
+  } catch (err) {
+    
+    const existingRec = await Recommendation.findOne({ patientId, doctorId });
+    if (existingRec) {
+        return res.status(200).json(existingRec);
+    }
+    console.error('Error fetching or saving recommendations:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

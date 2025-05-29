@@ -1,6 +1,33 @@
 import mongoose from 'mongoose';
 
 
+const mealSchema = new mongoose.Schema({
+  day: Number,
+  breakfast: {
+    item: String,
+    grams: Number
+  },
+  lunch: {
+    item: String,
+    grams: Number
+  },
+  dinner: {
+    item: String,
+    grams: Number
+  },
+  snacks: [{
+    item: String,
+    grams: Number
+  }]
+}, { _id: false });
+
+const exerciseScheduleSchema = new mongoose.Schema({
+  day: String,
+  activity: String,
+  duration_min: Number,
+  intensity: String
+}, { _id: false });
+
 const planSchema = new mongoose.Schema({
   patientId: {
     type: String,
@@ -13,26 +40,22 @@ const planSchema = new mongoose.Schema({
   },
   dietPlan: {
     description: { type: String, required: true },
-    calories: { type: Number, required: true },
-    meals: [{ type: String, required: true }]
+    dailyCaloriesTarget: { type: Number, required: true },
+    meals: [mealSchema]
   },
   exercisePlan: {
-    type: {
-      type: String,
-      required: true
-    },
-    duration: { type: Number, required: true },
-    frequency: { type: Number, required: true }
+    typeRecommendations: { type: String, required: true },
+    frequencySuggestion: { type: String, required: true },
+    weeklySchedule: [exerciseScheduleSchema]
   },
   nutritionTargets: {
-    targetBMI: { type: Number, required: true },
-    targetGlucose: { type: Number, required: true },
-    targetLDValue: { type: String, required: true }
+    targetBMI: { type: String, required: true },
+    targetGlucose: { type: String, required: true },
+    cholesterolTargets: { type: String, required: true }
   }
 }, {
   timestamps: true
 });
-
 
 const Plan = mongoose.models.Plan || mongoose.model('Plan', planSchema);
 export default Plan;
