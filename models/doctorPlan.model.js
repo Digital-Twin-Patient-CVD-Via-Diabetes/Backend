@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const MedicationRecommendationSchema = new Schema({
   name: { type: String, required: true },
-  type: { type: String, enum: ['new', 'existing'], default: 'new' },
+  type: { type: String, },
   dosage: { type: String, required: true },
   frequency: { type: String, required: true },
   duration: { type: String },
