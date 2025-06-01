@@ -289,7 +289,7 @@ const forgetPassword = async (req, res) => {
     const token = jwt.sign({ id: user._id, userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
     
     // Create reset link pointing to front-end
-    const resetLink = `https://diacordserver.onrender.com/src/reset-password.html?token=${token}`;
+    const resetLink = `https://diacordserver.onrender.com/reset-password.html?token=${token}`;
 
     // Set up email transporter
     const transporter = nodemailer.createTransport({
