@@ -129,7 +129,7 @@ const editAppointment = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
-       if (status === 'cancelled') {
+       if (status === 'Cancelled') {
             await appointments.findByIdAndDelete(appointmentId);
             return res.status(200).json({ message: 'Appointment cancelled' });
         }
@@ -152,7 +152,7 @@ const editAppointmentPatient = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
-        if (status === 'cancelled') {
+        if (status === 'Cancelled') {
             await appointments.findByIdAndDelete(appointmentId);
             return res.status(200).json({ message: 'Appointment cancelled' });
         }
